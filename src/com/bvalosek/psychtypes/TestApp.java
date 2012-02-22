@@ -15,7 +15,16 @@ public class TestApp {
 
     /** app entry point */
     public static void main(String[] args) {
-        System.out.println( "Hello World!" );
+
+        // try Type
+        Type type = new Type("entp");
+
+        for (int n=0; n < 16; n++) {
+            Type t = new Type(n);
+            System.out.println("Code " + n + " is type " + t);
+            Type u = new Type(t.toString());
+            System.out.println("  checked as " + u);
+        }
     }
 
 }
