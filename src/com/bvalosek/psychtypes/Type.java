@@ -42,9 +42,29 @@ public class Type {
     public List<Function> getCognativeFunctions() {
         ArrayList<Function> functions = new ArrayList<Function>();
 
-        Function f = new Function(true, true, true);
-        functions.add(f);
-        functions.add(f.getOpposite());
+        // If judging or sensing
+        String domEx = "";
+        String domIn = "";
+        if (has('j')) {
+            domEx += getJudging();
+            domIn += getPerception();
+        } else {
+            domEx += getPerception();
+            domIn += getJudging();
+        }
+
+        // if introverted or extroverted
+        if (has('e')) {
+            functions.add(new Function(domEx + "e"));
+            functions.add(new Function(domIn + "i"));
+        } else {
+            functions.add(new Function(domIn + "i"));
+            functions.add(new Function(domEx + "e"));
+        }
+
+        // add in tert and inf
+        functions.add(functions.get(1).getOpposite());
+        functions.add(functions.get(0).getOpposite());
 
         return functions;
     }
@@ -72,6 +92,20 @@ public class Type {
 
         // wut?
         return false;
+    }
+
+    // Getting the various parts of the code in String format
+    public char getAttitude() {
+        return toString().toCharArray()[0];
+    }
+    public char getPerception() {
+        return toString().toCharArray()[1];
+    }
+    public char getJudging() {
+        return toString().toCharArray()[2];
+    }
+    public char getOrientation() {
+        return toString().toCharArray()[3];
     }
 
     /** @return A pretty string code, e.g. ENTJ  */
