@@ -22,9 +22,9 @@ public class TestApp {
 
         for (int n=0; n < 16; n++) {
             Type t = new Type(n);
-            List<Type.Function> functions = t.getCognativeFunctions();
+            List<Function> functions = t.getCognativeFunctions();
             String s = t + " has functions ";
-            for (Type.Function f : functions) {
+            for (Function f : functions) {
                 s += f + ", ";
             }
             System.out.println (s);

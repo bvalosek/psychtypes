@@ -42,6 +42,10 @@ public class Type {
     public List<Function> getCognativeFunctions() {
         ArrayList<Function> functions = new ArrayList<Function>();
 
+        Function f = new Function(true, true, true);
+        functions.add(f);
+        functions.add(f.getOpposite());
+
         return functions;
     }
 
