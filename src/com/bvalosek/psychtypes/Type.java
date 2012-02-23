@@ -5,6 +5,8 @@
 //-----------------------------------------------------------------------------
 
 package com.bvalosek.psychtypes;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  *
@@ -16,24 +18,6 @@ public class Type {
 
     /** Internal represenation of the code, 0-15 */
     int     _typeCode = 0;
-
-    /** The 8 different cognitive functions */
-    public enum CognativeFunction {
-        SENSING_INTROVERTED("Si"),
-        SENSING_EXTROVERTED("Se"),
-        INTUITION_INTROVERTED("Ni"),
-        INTUITION_EXTROVERTED("Ne"),
-        FEELING_INTROVERTED("Fi"),
-        FEELING_EXTROVERTED("Fe"),
-        THINKING_INTROVERTED("Ti"),
-        THINKING_EXTROVERTED("Te");
-
-        public String _symbol;
-
-        CognativeFunction(String s) {
-            _symbol = s;
-        }
-    }
 
     /** Create via code number, mask with 0b1111 just to be safe */
     public Type(int n) {
@@ -52,6 +36,38 @@ public class Type {
                 case 'j': _typeCode += 1; break;
             }
         }
+    }
+
+    /** figure out functions */
+    public List<Function> getCognativeFunctions() {
+        ArrayList<Function> functions = new ArrayList<Function>();
+
+        return functions;
+    }
+
+    /** return true if a code contains character c in it */
+    public boolean has(char c) {
+        switch (c) {
+            case 'i':
+                return (_typeCode & 8) == 0;
+            case 'e':
+                return (_typeCode & 8) == 8;
+            case 's':
+                return (_typeCode & 4) == 0;
+            case 'n':
+                return (_typeCode & 4) == 4;
+            case 'f':
+                return (_typeCode & 2) == 0;
+            case 't':
+                return (_typeCode & 2) == 2;
+            case 'p':
+                return (_typeCode & 1) == 0;
+            case 'j':
+                return (_typeCode & 1) == 1;
+        }
+
+        // wut?
+        return false;
     }
 
     /** @return A pretty string code, e.g. ENTJ  */

@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------------
 
 package com.bvalosek.psychtypes;
+import java.util.List;
 
 /**
  *
@@ -21,9 +22,12 @@ public class TestApp {
 
         for (int n=0; n < 16; n++) {
             Type t = new Type(n);
-            System.out.println("Code " + n + " is type " + t);
-            Type u = new Type(t.toString());
-            System.out.println("  checked as " + u);
+            List<Type.Function> functions = t.getCognativeFunctions();
+            String s = t + " has functions ";
+            for (Type.Function f : functions) {
+                s += f + ", ";
+            }
+            System.out.println (s);
         }
     }
 
