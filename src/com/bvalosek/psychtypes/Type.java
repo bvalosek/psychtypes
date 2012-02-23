@@ -5,6 +5,8 @@
 //-----------------------------------------------------------------------------
 
 package com.bvalosek.psychtypes;
+
+// imports
 import java.util.List;
 import java.util.ArrayList;
 
@@ -26,7 +28,13 @@ public class Type {
 
     /** Create via a String code */
     public Type(String sType) {
+        setTypeCode(sType);
+    }
+
+    /** internal function used to code in via string */
+    private void setTypeCode(String sType) {
         String s = sType.toLowerCase();
+        _typeCode = 0;
 
         for (char c : s.toCharArray()) {
             switch (c) {
@@ -38,7 +46,57 @@ public class Type {
         }
     }
 
-    /** figure out functions */
+    /** Create via function groups */
+    public Type(Function dom, Function aux) {
+        String sDom = dom.toString(); String sAux = aux.toString();
+
+        // build it up via string essentially
+        String att , perc, jud, ori;
+        att = sDom.substring(1,2);
+
+        if (dom.isJudging()) {
+            jud = sDom.substring(0,1);
+            perc = sAux.substring(0,1);
+
+            if (dom.isExtroverted())
+                ori = "j";
+            else
+                ori = "p";
+        } else {
+            jud = sAux.substring(0,1);
+            perc = sDom.substring(0,1);
+
+            if (dom.isExtroverted())
+                ori = "p";
+            else
+                ori = "j";
+        }
+
+        setTypeCode(att + perc + jud + ori);
+    }
+
+    /**Create via String symbol functions */
+    public Type(String dom, String aux) {
+        this(new Function(dom), new Function(aux));
+    }
+
+    /** @return true if equal codes */
+    @Override public boolean equals(Object o) {
+        ri = "p";
+
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
+        if (getClass() != o.getClass())
+            return false;
+        Type t = (Type)o;
+
+        // true if type codes are equal
+        return t._typeCode == _typeCode;
+    }
+
+    /** @return A List of functions based on the code */
     public List<Function> getCognativeFunctions() {
         ArrayList<Function> functions = new ArrayList<Function>();
 
@@ -69,7 +127,7 @@ public class Type {
         return functions;
     }
 
-    /** return true if a code contains character c in it */
+    /** @return True if a code contains character c in it */
     public boolean has(char c) {
         switch (c) {
             case 'i':

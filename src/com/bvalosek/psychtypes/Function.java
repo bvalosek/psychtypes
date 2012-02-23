@@ -54,7 +54,16 @@ public class Function {
     /** @return opposite function */
     public Function getOpposite() {
         return new Function(!_isExtroverted, _isJudging, !_isStrong);
+    }
 
+    /** @return true of this is a Judging (T/F) function */
+    public boolean isJudging() {
+        return _isJudging;
+    }
+
+    /** @return true if this is an Extroverted function */
+    public boolean isExtroverted() {
+        return _isExtroverted;
     }
 
     /** @return symbol for this function */

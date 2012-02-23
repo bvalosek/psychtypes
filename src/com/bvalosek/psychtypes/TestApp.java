@@ -27,8 +27,13 @@ public class TestApp {
             for (Function f : functions) {
                 s += f + ", ";
             }
-            System.out.println (s);
+            //System.out.println (s);
+
         }
+
+        // wut
+        Type t = new Type("Te", "Ni");
+        System.out.println(t);
     }
 
 }
