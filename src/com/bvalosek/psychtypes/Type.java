@@ -82,8 +82,6 @@ public class Type {
 
     /** @return true if equal codes */
     @Override public boolean equals(Object o) {
-        ri = "p";
-
         if (this == o)
             return true;
         if (o == null)
@@ -164,6 +162,20 @@ public class Type {
     }
     public char getOrientation() {
         return toString().toCharArray()[3];
+    }
+
+    // toggle various parts
+    public Type toggleAttitude() {
+        return new Type(_typeCode ^= 8);
+    }
+    public Type togglePerception() {
+        return new Type(_typeCode ^= 4);
+    }
+    public Type toggleJudging() {
+        return new Type(_typeCode ^= 2);
+    }
+    public Type toggleOrientation() {
+        return new Type(_typeCode ^= 1);
     }
 
     /** @return A pretty string code, e.g. ENTJ  */

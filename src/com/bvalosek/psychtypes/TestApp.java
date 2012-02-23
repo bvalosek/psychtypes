@@ -34,6 +34,14 @@ public class TestApp {
         // wut
         Type t = new Type("Te", "Ni");
         System.out.println(t);
+        t = t.toggleAttitude();
+        System.out.println(t);
+        t = t.togglePerception();
+        System.out.println(t);
+        t = t.toggleJudging();
+        System.out.println(t);
+        t = t.toggleOrientation();
+        System.out.println(t);
     }
 
 }
