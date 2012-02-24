@@ -55,10 +55,26 @@ public class TestApp {
                 "Te", "Fe");
         quiz.addQuestion(q);
 
+        q = quiz.new BinaryQuestion(
+                "How fast can you count to potato?",
+                "Thirty-five",
+                "Herp Derp",
+                "Te", "Fe");
+        quiz.addQuestion(q);
+
         Question question = null;
         while ( (question = quiz.getNextQuestion()) != null) {
-            System.out.println(quiz.getRemainingCount() + " left: " + question.getContent());
+            System.out.println(quiz.getRemainingCount()
+                    + " left: " + question.getContent());
+            List<String> responses = question.getResponses();
+
+            for (String s : responses) {
+                System.out.println (" --- " + s);
+            }
         }
+
+
+        quiz.getScoringInfo();
     }
 
 }

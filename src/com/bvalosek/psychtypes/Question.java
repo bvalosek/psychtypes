@@ -15,44 +15,40 @@ import java.util.ArrayList;
  */
 public class Question {
 
-    protected String _content = "";
-    protected List<String> _responses = new ArrayList<String>();
-    protected int _chosenResponse = 0;
-    protected boolean _isAnswered = false;
+    protected String        _content = "";
+    protected int           _response = 0;
+    protected List<String>  _responses = new ArrayList<String>();
 
+    /** empty ctor */
     public Question() { }
 
-    /** Create with question/response */
-    public Question (String s, List<String> responses) {
-        _content = s;
-        _responses = responses;
-    }
-
     /** Create wit question response as strings */
-    public Question (String s, String a, String b) {
+    public Question (String s, String ... responses) {
         _content = s;
         _responses = new ArrayList<String>();
-        _responses.add(a);
-        _responses.add(b);
+
+        for (String r : responses) {
+            _responses.add(r);
+        }
     }
 
     /** Answer the question */
     public void choseResponse(int n) {
-        _chosenResponse = n;
-        _isAnswered = true;
+        _response = n;
     }
 
     /** @return the answer */
     public int getResponse() {
-        return _chosenResponse;
+        return _response;
     }
 
+    /** @return the actual question string */
     public String getContent() {
         return _content;
     }
 
-    /** @return true if answered */
-    public boolean isAnswered() {
-        return _isAnswered;
+    /** @return the list of possible responses */
+    public List<String> getResponses() {
+        return _responses;
     }
 }

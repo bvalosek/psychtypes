@@ -33,7 +33,7 @@ public class BinaryResponseQuiz implements Quizable {
     private static final Random _rndGen = new Random();
 
     /**
-     * question with scoring information attached
+     * Question with scoring information attached
      */
     public class BinaryQuestion extends Question {
 
@@ -43,16 +43,16 @@ public class BinaryResponseQuiz implements Quizable {
 
         /** Create with scoring codes */
         public BinaryQuestion(  String s, String a,
-                                        String b, String as, String bs) {
-            _content = s;
-            List<String> r = new ArrayList<String>(); r.add(a); r.add(b);
+                                String b, String as, String bs) {
+            super(s, a, b);
+
             _scoreCodeA = as;
             _scoreCodeB = bs;
         }
 
         /** @return string symbol for chosen response */
         public String getResponseCode() {
-            return _chosenResponse == 1 ? _scoreCodeA : _scoreCodeB;
+            return _response == 0 ? _scoreCodeA : _scoreCodeB;
         }
     }
 
@@ -113,6 +113,7 @@ public class BinaryResponseQuiz implements Quizable {
             }
 
             scoreMap.put(r, val + 1);
+            System.out.println("r=" + r + " val=" + val);
         }
 
         return scoreMap;
