@@ -9,7 +9,7 @@ package com.bvalosek.psychtypes;
 /**
  * Interface used for quizes
  */
-public Interface Quizable {
+public interface Quizable {
 
     /** Request another question from the stack. Consecutive calls will return
      * the same question until answered */
