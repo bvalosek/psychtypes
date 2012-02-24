@@ -51,6 +51,16 @@ public class Function {
         }
     }
 
+    /** @return a integer code */
+    public int getId() {
+        int n = 0;
+        n += _isExtroverted ? 1 : 0;
+        n += _isStrong ? 2 : 0;
+        n += _isJudging ? 4 : 0;
+
+        return n;
+    }
+
     /** @return opposite function */
     public Function getOpposite() {
         return new Function(!_isExtroverted, _isJudging, !_isStrong);

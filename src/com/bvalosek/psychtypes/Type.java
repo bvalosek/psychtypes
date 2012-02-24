@@ -151,17 +151,17 @@ public class Type {
     }
 
     // Getting the various parts of the code in String format
-    public char getAttitude() {
-        return toString().toCharArray()[0];
+    public String getAttitude() {
+        return toString().substring(0,1);
     }
-    public char getPerception() {
-        return toString().toCharArray()[1];
+    public String getPerception() {
+        return toString().substring(1,2);
     }
-    public char getJudging() {
-        return toString().toCharArray()[2];
+    public String getJudging() {
+        return toString().substring(2,3);
     }
-    public char getOrientation() {
-        return toString().toCharArray()[3];
+    public String getOrientation() {
+        return toString().substring(3);
     }
 
     // toggle various parts
