@@ -15,10 +15,12 @@ import java.util.ArrayList;
  */
 public class Question {
 
-    private String _content = "";
-    private List<String> _responses = new ArrayList<String>();
-    private int _chosenResponse = 0;
-    private boolean _isAnswered = false;
+    protected String _content = "";
+    protected List<String> _responses = new ArrayList<String>();
+    protected int _chosenResponse = 0;
+    protected boolean _isAnswered = false;
+
+    public Question() { }
 
     /** Create with question/response */
     public Question (String s, List<String> responses) {
