@@ -17,20 +17,20 @@ import java.util.ArrayList;
 public class BinaryResponseQuiz implements Quizable {
 
     /** main list of questions */
-    private List<BinaryResponseQuestion> _questions =
-        new ArrayList<BinaryResponseQuestion>();
+    private List<BinaryQuestion> _questions =
+        new ArrayList<BinaryQuestion>();
 
     /**
      * question with scoring information attached
      */
-    public class BinaryResponseQuestion extends Question {
+    public class BinaryQuestion extends Question {
 
         // e.g. Si, Ne, E, I etc
         private String _scoreCodeA = "";
         private String _scoreCodeB = "";
 
         /** Create with scoring codes */
-        public BinaryResponseQuestion(  String s, String a,
+        public BinaryQuestion(  String s, String a,
                                         String b, String as, String bs) {
             _content = s;
             List<String> r = new ArrayList<String>(); r.add(a); r.add(b);
@@ -45,6 +45,11 @@ public class BinaryResponseQuiz implements Quizable {
     public Question getNextQuestion() {
         Question q = new Question("Some question...", "A", "B");
         return q;
+    }
+
+    /** add another question */
+    public void addQuestion(BinaryQuestion q) {
+        _questions.add(q);
     }
 
     /** @return true if we can finish the quiz */

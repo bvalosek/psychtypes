@@ -31,17 +31,15 @@ public class TestApp {
 
         }
 
-        // wut
-        Type t = new Type("Te", "Ni");
-        System.out.println(t);
-        t = t.toggleAttitude();
-        System.out.println(t);
-        t = t.togglePerception();
-        System.out.println(t);
-        t = t.toggleJudging();
-        System.out.println(t);
-        t = t.toggleOrientation();
-        System.out.println(t);
+        BinaryResponseQuiz quiz = new BinaryResponseQuiz();
+        BinaryResponseQuiz.BinaryQuestion q = quiz.new BinaryQuestion(
+                "Would you rather find yourself",
+                "getting sodomized by a buffalo",
+                "shitting your brains out on your birthday",
+                "Se", "Ne");
+        quiz.addQuestion(q);
+
+
     }
 
 }
