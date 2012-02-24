@@ -9,6 +9,7 @@ package com.bvalosek.psychtypes;
 // imports
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Quiz that has 2 possible responses, each adding to either a cognitive
@@ -19,6 +20,16 @@ public class BinaryResponseQuiz implements Quizable {
     /** main list of questions */
     private List<BinaryQuestion> _questions =
         new ArrayList<BinaryQuestion>();
+
+    /** questions moved here when answered */
+    private List<BinaryQuestion> _answeredQuestions =
+        new ArrayList<BinaryQuestion>();
+
+    /** current question that's out */
+    private BinaryQuestion _curQuestion = null;
+
+    /** random generator */
+    private static final Random _rndGen = new Random();
 
     /**
      * question with scoring information attached
@@ -43,8 +54,26 @@ public class BinaryResponseQuiz implements Quizable {
      * @return the next question off the stack, or the same one if unanswered
      */
     public Question getNextQuestion() {
-        Question q = new Question("Some question...", "A", "B");
-        return q;
+        /*
+         * This should check if the question was skipped before adding it to
+         * the completed questions array
+         */
+
+        // find the current question, move to answered pile
+        if (_curQuestion != null) {
+            _questions.remove(_curQuestion);
+            _answeredQuestions.add(_curQuestion);
+            _curQuestion = null;
+        }
+
+        if (_questions.size() == 0)
+            return null;
+
+        // pick a random next question
+        int r = _rndGen.nextInt(_questions.size());
+        _curQuestion = _questions.get(r);
+
+        return _curQuestion;
     }
 
     /** add another question */

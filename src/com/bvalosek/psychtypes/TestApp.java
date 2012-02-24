@@ -32,14 +32,28 @@ public class TestApp {
         }
 
         BinaryResponseQuiz quiz = new BinaryResponseQuiz();
-        BinaryResponseQuiz.BinaryQuestion q = quiz.new BinaryQuestion(
+        BinaryResponseQuiz.BinaryQuestion q = null;
+
+        q = quiz.new BinaryQuestion(
                 "Would you rather find yourself",
                 "getting sodomized by a buffalo",
                 "shitting your brains out on your birthday",
                 "Se", "Ne");
         quiz.addQuestion(q);
 
+        q = quiz.new BinaryQuestion(
+                "Which of the following sounds more delicious",
+                "Some bananas",
+                "A fucking lot of bananas",
+                "E", "I");
+        quiz.addQuestion(q);
 
+        q = quiz.new BinaryQuestion(
+                "Give the opportunity, would you rather",
+                "Shit while skydiving",
+                "Or vomit during sex",
+                "Te", "Se");
+        quiz.addQuestion(q);
     }
 
 }
