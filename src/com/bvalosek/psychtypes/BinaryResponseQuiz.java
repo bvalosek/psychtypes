@@ -10,6 +10,7 @@ package com.bvalosek.psychtypes;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.HashMap;
 
 /**
  * Quiz that has 2 possible responses, each adding to either a cognitive
@@ -47,6 +48,11 @@ public class BinaryResponseQuiz implements Quizable {
             List<String> r = new ArrayList<String>(); r.add(a); r.add(b);
             _scoreCodeA = as;
             _scoreCodeB = bs;
+        }
+
+        /** @return string symbol for chosen response */
+        public String getResponseCode() {
+            return _chosenResponse == 1 ? _scoreCodeA : _scoreCodeB;
         }
     }
 
@@ -88,20 +94,38 @@ public class BinaryResponseQuiz implements Quizable {
 
     /** @return a Type if we're done or null if not */
     public Type getResults() {
-
         return new Type("entp");
+    }
+
+    /** @return map of code-> score */
+    public HashMap<String, Integer> getScoringInfo() {
+        /*
+         * Loop over all answered questions, building a preference
+         * based on what cognitive functions or attitudes are prevalent
+         */
+        HashMap<String, Integer> scoreMap = new HashMap<String, Integer>();
+        for (BinaryQuestion q : _answeredQuestions) {
+            String r = q.getResponseCode();
+            int val = 0;
+
+            if (scoreMap.containsKey(r)) {
+                val = scoreMap.get(r);
+            }
+
+            scoreMap.put(r, val + 1);
+        }
+
+        return scoreMap;
     }
 
     /** @return total questions answered thus far */
     public int getAnsweredCount() {
-
-        return 0;
+        return _answeredQuestions.size();
     }
 
     /** @return total potential questions remaining */
     public int getRemainingCount() {
-
-        return 0;
+        return _questions.size();
     }
 
 }

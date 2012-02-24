@@ -47,6 +47,10 @@ public class Question {
         return _chosenResponse;
     }
 
+    public String getContent() {
+        return _content;
+    }
+
     /** @return true if answered */
     public boolean isAnswered() {
         return _isAnswered;

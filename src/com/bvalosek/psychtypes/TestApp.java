@@ -49,11 +49,16 @@ public class TestApp {
         quiz.addQuestion(q);
 
         q = quiz.new BinaryQuestion(
-                "Give the opportunity, would you rather",
+                "Given the opportunity, would you rather",
                 "Shit while skydiving",
                 "Or vomit during sex",
-                "Te", "Se");
+                "Te", "Fe");
         quiz.addQuestion(q);
+
+        Question question = null;
+        while ( (question = quiz.getNextQuestion()) != null) {
+            System.out.println(quiz.getRemainingCount() + " left: " + question.getContent());
+        }
     }
 
 }
