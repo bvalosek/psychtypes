@@ -35,6 +35,8 @@ public class TestApp {
         }
         */
 
+
+        /*
         Type entp = new Type("esfJ");
 
         for (Type.Transform x : Type.Transform.values()) {
@@ -44,6 +46,20 @@ public class TestApp {
                 funcs += f + " ";
             System.out.println(x + "\n  " + t + "\n   " + funcs);
         }
+        */
+
+        Scorer<Type> scorer = new Scorer<Type>();
+
+        scorer.add(new Type("entp"), 3);
+        scorer.add(new Type("esfj"), 1);
+        scorer.add(new Type("intj"), 5);
+        scorer.add(new Type("istp"), 10);
+        scorer.add(new Type("esfp"), 3);
+
+        for (Type t : scorer.getSortedList()) {
+            System.out.println(t);
+        }
+
 
     }
 

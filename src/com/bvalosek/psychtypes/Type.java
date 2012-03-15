@@ -107,6 +107,21 @@ public class Type {
         this(new Function(dom), new Function(aux));
     }
 
+    /** return a list of all the possible types */
+    public static List<Type> allTypes() {
+        List<Type> types = new ArrayList<Type>();
+
+        for (int n = 0; n < 16; n++)
+            types.add(new Type(n));
+
+        return types;
+    }
+
+    /** use typecode as the hash */
+    @Override public int hashCode() {
+        return _typeCode;
+    }
+
     /** @return true if equal codes */
     @Override public boolean equals(Object o) {
         if (this == o)

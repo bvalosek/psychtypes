@@ -9,7 +9,7 @@ package com.bvalosek.psychtypes;
 /**
  * Cognitive function
  */
-public class Function implements Comparable {
+public class Function {
 
     private boolean _isExtroverted = false;
 
@@ -18,9 +18,6 @@ public class Function implements Comparable {
 
     /** strong = N or T, !strong = S or F */
     private boolean _isStrong = false;
-
-    /** score associated with this particular function */
-    private int _score = 0;
 
     /** create via the degrees directly */
     public Function (boolean e, boolean j, boolean s) {
@@ -71,20 +68,6 @@ public class Function implements Comparable {
         return n;
     }
 
-    /** comparable function, compare SCORE not TYPE */
-    public int compareTo(Object o) {
-        if (o.getClass() != getClass())
-            return -1;
-
-        Function f = (Function)o;
-        if (f._score == _score)
-            return 0;
-        if (_score > f._score)
-            return 1;
-        else
-            return -1;
-    }
-
     /** @return opposite function */
     public Function getOpposite() {
         return new Function(!_isExtroverted, _isJudging, !_isStrong);
@@ -124,16 +107,26 @@ public class Function implements Comparable {
         return _isExtroverted;
     }
 
-    public int getScore() {
-        return _score;
+    /** use ID as the hash */
+    @Override public int hashCode() {
+        return getId();
     }
 
-    public void setScore(int n) {
-        _score = n;
-    }
+    /** @return true if equal ID */
+    @Override public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
+        if (getClass() != o.getClass())
+            return false;
+        Function t = (Function)o;
 
+        // equal if same ID
+        return t.getId() == getId();
+    }
     /** @return symbol for this function */
-    public String toString() {
+    @Override public String toString() {
         String s = "";
         if (_isJudging && _isStrong) s = "T";
         if (_isJudging && !_isStrong) s = "F";

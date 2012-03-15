@@ -8,9 +8,10 @@ package com.bvalosek.psychtypes;
 
 // imports
 import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Interface used for quizes
+ * Interface used for the quizes that determine psychological type
  */
 public interface Quizable {
 
@@ -20,24 +21,18 @@ public interface Quizable {
     /** Return the current question */
     public Question getCurrentQuestion();
 
-    /** @return True if the quiz is over, or at least could be finished at this
-     * time in the case of optional-length quizes */
-    public boolean isQuizComplete();
-
     /** @return Quiz results */
     public Type getResult();
 
-    /** @return number of answered questions */
+    /** @return Number of answered questions */
     public int getAnsweredCount();
 
-    /** @return number of possible questions left */
+    /** @return Number of possible questions left */
     public int getRemainingCount();
 
-    /** @return number of offered questions (answered + skipped) */
-    public int getOfferedCount();
+    /** @retrun A map from a function to its current score */
+    public Map<Function, Integer> getFunctionScores();
 
-    /** @return a map of various degrees and integer values of weight. For
-     * example scoring the various cognitive function or dichotomies
-     */
-    public HashMap<String, Integer> getScoringInfo();
+    /** @return A map from from a type to its current score */
+    public Map<Type, Integer> getTypeScores();
 }

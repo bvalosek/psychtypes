@@ -10,6 +10,7 @@ package com.bvalosek.psychtypes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
+import java.util.Map;
 
 /**
  * Generic class that is used when we need to score and sort objects against
@@ -53,6 +54,14 @@ public class Scorer<T> {
         _entries.add(entry);
     }
 
+    /** Add the elements of a T => Integer map */
+    public void add(Map<T, Integer> map) {
+        for (Map.Entry<T, Integer> entry : map.entrySet()) {
+            add(entry.getKey(), entry.getValue());
+        }
+    }
+
+
     /** get the sorted (high to low) array of just type T */
     public List<T> getSortedList() {
         List<T> list = new ArrayList<T>();
@@ -61,6 +70,22 @@ public class Scorer<T> {
         Collections.reverse(_entries);
         for (Entry e : _entries) {
             list.add(e._object);
+        }
+
+        return list;
+    }
+
+    /** Get the sorted (high to low) array such that score is greater than or
+     * equal to the threshold */
+    public List<T> getSortedList(int threshold) {
+
+        List<T> list = new ArrayList<T>();
+
+        Collections.sort(_entries);
+        Collections.reverse(_entries);
+        for (Entry e : _entries) {
+            if (e._score >= threshold)
+                list.add(e._object);
         }
 
         return list;

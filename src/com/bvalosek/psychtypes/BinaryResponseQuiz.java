@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 
 /**
  * Quiz that has 2 possible responses, each adding to either a cognitive
@@ -31,13 +32,10 @@ public class BinaryResponseQuiz implements Quizable {
     /** current question that's out */
     private BinaryQuestion _curQuestion = null;
 
-    /** random generator */
-    private static final Random _rndGen = new Random();
-
     /** where we are in the quiz */
     private Phase _phase = Phase.INITIALIZED;
 
-    /** how lowest a function score can go before getting dropped */
+    /** how low a function score can go before getting dropped */
     public static final int FUNCTION_DROP_THRESHOLD = -2;
 
     /** Different quiz phases */
@@ -45,54 +43,7 @@ public class BinaryResponseQuiz implements Quizable {
         INITIALIZED, QUESTIONS_MUTEX, QUESTIONS_NORMAL, FINISHED;
     }
 
-    /**
-     * Question with scoring information attached
-     */
-    public class BinaryQuestion extends Question {
-
-        // e.g. Si, Ne, E, I etc
-        private String _scoreCodeA = "";
-        private String _scoreCodeB = "";
-
-        /** Create with scoring codes */
-        public BinaryQuestion(  String s, String a,
-                                String b, String as, String bs) {
-            super(s, a, b);
-
-            _scoreCodeA = as;
-            _scoreCodeB = bs;
-        }
-
-        /* swap the order of the response */
-        public void swapResponses() {
-            String a = _responses.get(0);
-            String b = _responses.get(1);
-
-            String as = _scoreCodeA;
-            String bs = _scoreCodeB;
-
-            _responses.set(0, b);
-            _responses.set(1, a);
-            _scoreCodeA = bs;
-            _scoreCodeB = as;
-        }
-
-        /** @return true if responses are mutually exclusive */
-        public boolean isMutuallyExclusive() {
-            return Function.isMutuallyExclusive(
-                    new Function(_scoreCodeA), new Function(_scoreCodeB));
-        }
-
-        /** @return string symbol for chosen response */
-        public String getResponseCode() {
-            return _response == 0 ? _scoreCodeA : _scoreCodeB;
-        }
-
-        /** @return what was not chosen */
-        public String getOtherCode() {
-            return _response == 0 ? _scoreCodeB : _scoreCodeA;
-        }
-    }
+    private static final Random RANDOM = new Random();
 
     /**
      * @return the next question off the stack, or the same one if unanswered
@@ -116,7 +67,7 @@ public class BinaryResponseQuiz implements Quizable {
 
             // get all mutex questions, if we're out, advance to next phase
             case QUESTIONS_MUTEX:
-                pool = filterQuestions();
+                pool = getFilteredQuestions();
 
                 if (pool.size() > 0)
                     break;
@@ -125,7 +76,7 @@ public class BinaryResponseQuiz implements Quizable {
 
             // get all non-mutex questions, if out, we're done
             case QUESTIONS_NORMAL:
-                pool = filterQuestions();
+                pool = getFilteredQuestions();
 
                 if (pool.size() > 0)
                     break;
@@ -140,34 +91,21 @@ public class BinaryResponseQuiz implements Quizable {
             return null;
 
         // pick a random next question
-        int r = _rndGen.nextInt(pool.size());
-        _curQuestion = pool.get(r);
+        _curQuestion = pool.get(RANDOM.nextInt(pool.size()));
 
         // mix order?
-        if (_rndGen.nextBoolean())
+        if (RANDOM.nextBoolean())
             _curQuestion.swapResponses();
 
         return _curQuestion;
     }
 
-    /** add another question */
-    public void addQuestion(BinaryQuestion q) {
-        _questions.add(q);
-    }
-
-    /** @return true if we can finish the quiz */
-    @Override public boolean isQuizComplete() {
-        return true;
-    }
-
-    /** @return the current quiz phase */
-    public Phase getPhase() {
-        return _phase;
-    }
-
-    /** @return a Type if we're done or null if not */
+    /** @return The most likely Type thus far */
     @Override public Type getResult() {
-        return getMostLikelyType();
+        // score the Types and return the top one
+        Scorer<Type> scorer = new Scorer<Type>();
+        scorer.add(getTypeScores());
+        return scorer.getSortedList().get(0);
     }
 
     /** @return the current question we're on, or getNextQuestion if we haven't
@@ -179,86 +117,16 @@ public class BinaryResponseQuiz implements Quizable {
         return _curQuestion;
     }
 
-    /** score the various functions and sort */
-    public List<Function> scoreFunctions() {
-        List<Function> functions = new ArrayList<Function>();
-
-        // get the map of function code -> score and make a list
-        HashMap<String, Integer> scores = getScoringInfo();
-        for (Map.Entry<String, Integer> entry : scores.entrySet()) {
-            Function f = new Function(entry.getKey());
-            f.setScore(entry.getValue());
-            functions.add(f);
-        }
-
-        // sort high-to-low and return
-        Collections.sort(functions);
-        Collections.reverse(functions);
-        return functions;
-    }
-
-    /** @return The most likely Type thus far */
-    public Type getMostLikelyType() {
-        int[] scores = scoreTypes();
-        int biggest = 0;
-
-
-        for (int n = 0; n < 16; n++) {
-            if (scores[n] > scores[biggest])
-                biggest = n;
-        }
-
-        return new Type(biggest);
-    }
-
-    /** score the types thus far */
-    public int[] scoreTypes() {
-        int[] ret = new int[16];
-
-        HashMap<String, Integer> scores = getScoringInfo();
-        for (int n = 0; n < 16; n++) {
-            Type t = new Type(n);
-
-            int i = 0;
-            int score = 0;
-            for (Function fn : t.getCognativeFunctions()) {
-                String f = fn.toString();
-                switch(i++) {
-                    case 0:
-                        if (scores.containsKey(f))
-                            score += scores.get(f) * 20;
-                        break;
-                    case 1:
-                        if (scores.containsKey(f))
-                            score += scores.get(f) * 12;
-                        break;
-                    case 2:
-                        if (scores.containsKey(f))
-                            score += scores.get(f) * 7;
-                        break;
-                    case 3:
-                        if (scores.containsKey(f))
-                            score += scores.get(f) * 5;
-                        break;
-                }
-            }
-
-            ret[n] = score;
-        }
-
-        return ret;
-    }
-
-    /** @return map of code-> score */
-    @Override public HashMap<String, Integer> getScoringInfo() {
+    /** @return A map of the function scores thus far */
+    @Override public Map<Function, Integer> getFunctionScores() {
         /*
          * Loop over all answered questions, building a preference
          * based on what cognitive functions or attitudes are prevalent
          */
-        HashMap<String, Integer> scoreMap = new HashMap<String, Integer>();
+        HashMap<Function, Integer> scoreMap = new HashMap<Function, Integer>();
         for (BinaryQuestion q : _answeredQuestions) {
-            String  r   = q.getResponseCode();
-            String  o   = q.getOtherCode();
+            Function  r   = new Function(q.getResponseCode());
+            Function  o   = new Function(q.getOtherCode());
 
             /* increment the maps, and decrement the other choice if mutually
              * exclusive options */
@@ -272,42 +140,42 @@ public class BinaryResponseQuiz implements Quizable {
         return scoreMap;
     }
 
-    /** @return a list of functions that we should keep asking about */
-    public List<String> getViableFunctions() {
-        List<String> ret = new ArrayList<String>();
+    /** @return A map from from a type to its current score */
+    @Override public Map<Type, Integer> getTypeScores() {
 
-        for (Function f : scoreFunctions()) {
-            if(f.getScore() >= FUNCTION_DROP_THRESHOLD) {
-                ret.add(f.toString());
+        Map<Function, Integer> funcs = getFunctionScores();
+
+        /** loop over all the types and calculate the score based on the
+         * weighted sum of the 4 cognitive functions */
+        Map<Type, Integer> scores = new HashMap<Type, Integer>();
+        for (Type t : Type.allTypes()) {
+            int i = 0;
+            int score = 0;
+
+            // add to score for each function
+            for (Function f : t.getCognativeFunctions()) {
+                switch (i++) {
+                    case 0:
+                        score += funcs.containsKey(f) ? funcs.get(f) * 20 : 0;
+                        break;
+                    case 1:
+                        score += funcs.containsKey(f) ? funcs.get(f) * 15 : 0;
+                        break;
+                    case 2:
+                        score += funcs.containsKey(f) ? funcs.get(f) * 12 : 0;
+                        break;
+                    case 3:
+                        score += funcs.containsKey(f) ? funcs.get(f) * 8 : 0;
+                        break;
+
+                }
             }
+
+            // add to big score map
+            scores.put(t, score);
         }
 
-        return ret;
-    }
-
-    /** @return a filtered List of Questions based on certain criteria */
-    private List<BinaryQuestion> filterQuestions() {
-
-        /* brute-force iterate over all the questions and test each to see if
-         * it matches our give conditions */
-        List<BinaryQuestion> ret = new ArrayList<BinaryQuestion>();
-        List<String> funcs = getViableFunctions();
-        for (BinaryQuestion q : _questions) {
-
-            // if we're on the mutex phase and its a mutex question
-            if (q.isMutuallyExclusive() && _phase == Phase.QUESTIONS_MUTEX) {
-                ret.add(q);
-
-            // if we're on normal and both function codes are viable
-            } else if (!q.isMutuallyExclusive() &&
-                    _phase == Phase.QUESTIONS_NORMAL &&
-                    funcs.contains(q._scoreCodeA) &&
-                    funcs.contains(q._scoreCodeB)) {
-                ret.add(q);
-            }
-        }
-
-        return ret;
+        return scores;
     }
 
     /** @return total questions answered thus far */
@@ -320,8 +188,47 @@ public class BinaryResponseQuiz implements Quizable {
         return _questions.size();
     }
 
-    /** @return total questions offered (answered + skipped) */
-    @Override public int getOfferedCount() {
-        return _answeredQuestions.size();
+    /** add another question */
+    public void addQuestion(BinaryQuestion q) {
+        _questions.add(q);
+    }
+
+    /** @return a list of functions that we should keep asking about */
+    public List<Function> getViableFunctions() {
+        Scorer<Function> scorer = new Scorer<Function>();
+
+        // iterate over scored functions and add to the scorer
+        for (Map.Entry<Function, Integer> entry :
+                getFunctionScores().entrySet()) {
+            scorer.add(entry.getKey(), entry.getValue());
+        }
+
+        // return a sorted list, drop everything that's below the thresh
+        return scorer.getSortedList(FUNCTION_DROP_THRESHOLD);
+    }
+
+    /** @return A filtered List of Questions based on what phase the quiz is
+     * currently in*/
+    private List<BinaryQuestion> getFilteredQuestions() {
+
+        // iterate over all questions and see if it we should add it
+        List<BinaryQuestion> ret = new ArrayList<BinaryQuestion>();
+        List<Function> funcs = getViableFunctions();
+        for (BinaryQuestion q : _questions) {
+
+            // if we're on the mutex phase and its a mutex question
+            if (q.isMutuallyExclusive() && _phase == Phase.QUESTIONS_MUTEX) {
+                ret.add(q);
+
+            // if we're on normal and both function codes are viable
+            } else if (!q.isMutuallyExclusive() &&
+                    _phase == Phase.QUESTIONS_NORMAL &&
+                    funcs.contains(new Function(q.getResponseCode())) &&
+                    funcs.contains(new Function(q.getOtherCode()))) {
+                ret.add(q);
+            }
+        }
+
+        return ret;
     }
 }
