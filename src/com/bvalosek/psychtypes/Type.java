@@ -94,6 +94,11 @@ public class Type {
         return t._typeCode == _typeCode;
     }
 
+    /** @return integer code for this type */
+    public int getCode() {
+        return _typeCode;
+    }
+
     /** @return A List of functions based on the code */
     public List<Function> getCognativeFunctions() {
         ArrayList<Function> functions = new ArrayList<Function>();
