@@ -18,8 +18,34 @@ import java.util.ArrayList;
  */
 public class Type {
 
-    /** Internal represenation of the code, 0-15 */
+    /** Internal representation of the code, 0-15 */
     int     _typeCode = 0;
+
+    /** Codes for the various transforms Type => Type
+     *
+     * Inspired by info at http://typelogic.com/pairs.html
+     */
+    public enum Transform {
+        IDENTITY(0),    /* identity */
+        COMPLEMENT(1),  /* compatible strengths, opposite emphasis */
+        COMPANION(2),   /* similar modes of expression, work well together */
+        ADVISOR(3),     /* each has area of insight the other lacks */
+        NEIGHBOR(4),    /* arrive at same place by variant process */
+        SUITEMATE(5),   /* prefer similar climates, but different world view */
+        ENGIMA(6),      /* a puzzle, totally different and foreign */
+        SUPPLEMENT(7),  /* work and play well together, but further removed */
+        PAL(8),         /* work and play well together, minimal conflict */
+        CONTRAST(9),    /* point and counterpoint each function */
+        TRIBESMAN(10),  /* share a sense of culture, but with diff values */
+        PEDAGOGUE(11),  /* each both mentor and student to one another */
+        COUNTERPART(12),/* similar functions in totally different realms */
+        COHORT(13),     /* mutually drawn into experimental escapades */
+        NOVELTY(14),    /* intriguingly different, interestingly so */
+        ANIMA(15);      /* opposites */
+
+        public int transformCode;
+        Transform(int n) { transformCode = n; }
+    }
 
     /** Create via code number, mask with 0b1111 just to be safe */
     public Type(int n) {
@@ -98,6 +124,24 @@ public class Type {
     /** @return integer code for this type */
     public int getCode() {
         return _typeCode;
+    }
+
+    /** Transform a type */
+    public Type transform(Transform x) {
+        // XOR our code to make the new type
+        return new Type(_typeCode ^ x.transformCode);
+    }
+
+    /** Get what transform/relationship we have with another type */
+    public Transform getTransform(Type t) {
+        // just brute-force try them all
+        for (Transform u : Transform.values()) {
+            if (t.transform(u).equals(this))
+                return u;
+        }
+
+        // shouldn't happen, but...
+        return null;
     }
 
     /** @return A List of functions based on the code */
