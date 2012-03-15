@@ -50,7 +50,8 @@ public class Type {
     public Type(Function dom, Function aux) {
         String sDom = dom.toString(); String sAux = aux.toString();
 
-        // build it up via string essentially
+        /* Essentially, do the code analysis via a string and
+         * create the code from the resulting letters */
         String att , perc, jud, ori;
         att = sDom.substring(1,2);
 
@@ -75,7 +76,7 @@ public class Type {
         setTypeCode(att + perc + jud + ori);
     }
 
-    /**Create via String symbol functions */
+    /** Create via String symbol functions */
     public Type(String dom, String aux) {
         this(new Function(dom), new Function(aux));
     }
@@ -134,19 +135,15 @@ public class Type {
     public boolean has(char c) {
         switch (c) {
             case 'i':
-                return (_typeCode & 8) == 0;
             case 'e':
                 return (_typeCode & 8) == 8;
             case 's':
-                return (_typeCode & 4) == 0;
             case 'n':
                 return (_typeCode & 4) == 4;
             case 'f':
-                return (_typeCode & 2) == 0;
             case 't':
                 return (_typeCode & 2) == 2;
             case 'p':
-                return (_typeCode & 1) == 0;
             case 'j':
                 return (_typeCode & 1) == 1;
         }
