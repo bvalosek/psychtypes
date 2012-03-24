@@ -8,9 +8,12 @@ package com.bvalosek.psychtypes;
 
 // imports
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Collections;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.PriorityQueue;
 
 /**
  * Generic class that is used when we need to score and sort objects against
@@ -20,74 +23,43 @@ import java.util.Map;
  */
 public class Scorer<T> {
 
-    protected List<Entry> _entries = new ArrayList<Entry>();
-
-    /** Entry class, T objects sorted by score */
-    private class Entry implements Comparable {
-        private T   _object = null;
-        private int _score = 0;
-
-        public Entry(T object, int score) {
-            _object = object;
-            _score = score;
-        }
-
-        /** sort based on the score */
-        public int compareTo(Object o) {
-            if (o.getClass() != getClass())
-                return -1;
-
-            Entry e = (Entry)o;
-            if (_score == e._score)
-                return 0;
-            if (_score > e._score)
-                return 1;
-            else
-                return -1;
-        }
-
-    }
-
+	private final Comparator<Map.Entry<T, Integer>> COUNT_COMPARATOR 
+		= new Comparator<Map.Entry<T,Integer>>() {
+			@Override
+			public int compare(Entry<T, Integer> left, Entry<T, Integer> right) {
+				return left.getValue().compareTo(right.getValue());
+			}
+		};
+		
+	private final Map<T, Integer> counter = new HashMap<T, Integer>();
+	
     /** insert an element */
     public void add(T t, int score) {
-        Entry entry = new Entry(t, score);
-        _entries.add(entry);
+    	counter.put(t, score);
     }
 
     /** Add the elements of a T => Integer map */
     public void add(Map<T, Integer> map) {
-        for (Map.Entry<T, Integer> entry : map.entrySet()) {
-            add(entry.getKey(), entry.getValue());
-        }
+    	counter.putAll(map);
     }
-
 
     /** get the sorted (high to low) array of just type T */
     public List<T> getSortedList() {
-        List<T> list = new ArrayList<T>();
-
-        Collections.sort(_entries);
-        Collections.reverse(_entries);
-        for (Entry e : _entries) {
-            list.add(e._object);
-        }
-
-        return list;
+        return getSortedList(Integer.MIN_VALUE);
     }
 
     /** Get the sorted (high to low) array such that score is greater than or
      * equal to the threshold */
     public List<T> getSortedList(int threshold) {
-
+    	PriorityQueue<Map.Entry<T,Integer>> pscorer = new PriorityQueue<Map.Entry<T,Integer>>(counter.size(), COUNT_COMPARATOR);
+    	pscorer.addAll(counter.entrySet());
+    	
         List<T> list = new ArrayList<T>();
-
-        Collections.sort(_entries);
-        Collections.reverse(_entries);
-        for (Entry e : _entries) {
-            if (e._score >= threshold)
-                list.add(e._object);
-        }
-
+        Map.Entry<T, Integer> entry;
+    	while((entry = pscorer.poll()) != null) {
+    		if (entry.getValue() >= threshold)
+    			list.add(entry.getKey());
+    	}
         return list;
     }
 }
