@@ -8,6 +8,7 @@ package com.bvalosek.psychtypes;
 
 // imports
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,16 @@ public class Scorer<T> {
 				return left.getValue().compareTo(right.getValue());
 			}
 		};
-		
+
+	// Comparator that is the reverse of the COUNT_COMPARATOR
+    // This could be replaced with Ordering in Guava
+	private final Comparator<Map.Entry<T, Integer>> REVERSE_COUNT_COMPARATOR 
+		= new Comparator<Map.Entry<T,Integer>>() {
+			@Override
+			public int compare(Entry<T, Integer> left, Entry<T, Integer> right) {
+				return -1 * COUNT_COMPARATOR.compare(left, right);
+			}
+		};		
 	private final Map<T, Integer> counter = new HashMap<T, Integer>();
 	
     /** insert an element */
@@ -51,7 +61,7 @@ public class Scorer<T> {
     /** Get the sorted (high to low) array such that score is greater than or
      * equal to the threshold */
     public List<T> getSortedList(int threshold) {
-    	PriorityQueue<Map.Entry<T,Integer>> pscorer = new PriorityQueue<Map.Entry<T,Integer>>(counter.size(), COUNT_COMPARATOR);
+    	PriorityQueue<Map.Entry<T,Integer>> pscorer = new PriorityQueue<Map.Entry<T,Integer>>(counter.size(), REVERSE_COUNT_COMPARATOR);
     	pscorer.addAll(counter.entrySet());
     	
         List<T> list = new ArrayList<T>();
@@ -61,5 +71,5 @@ public class Scorer<T> {
     			list.add(entry.getKey());
     	}
         return list;
-    }
+    } 
 }
