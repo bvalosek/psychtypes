@@ -188,6 +188,45 @@ public class BinaryResponseQuiz implements Quizable {
         return _questions.size();
     }
 
+    /** @return the score of chosing fA over fB, given the quiz thus far */
+    public int getResponseScore(Function fA, Function fB) {
+        int score = 0;
+
+        /* Iterate over all types scored thus far, if fA occurs before fB, then
+         * add the score of the type. If either fA or fB don't appear, or they
+         * occur in opposite order, then subtract */
+        for (Map.Entry<Type, Integer> entry : getTypeScores().entrySet()) {
+            Type t = entry.getKey();
+            int typeScore = entry.getValue();
+
+            int aLoc = 0;
+            int bLoc = 0;
+            int n = 0;
+            for (Function f : t.getCognativeFunctions()) {
+                n++;
+                if (f.equals(fA))
+                    aLoc = n;
+                if (f.equals(fB))
+                    bLoc = n;
+            }
+
+            if (aLoc != 0 && bLoc !=0) {
+                if (aLoc < bLoc) {
+                    score += typeScore;
+                } else {
+                    score -= typeScore;
+                }
+            }
+        }
+
+        return score;
+    }
+
+    /** @return the current phase */
+    public Phase getPhase() {
+        return _phase;
+    }
+
     /** add another question */
     public void addQuestion(BinaryQuestion q) {
         _questions.add(q);

@@ -1,0 +1,14 @@
+psychtypes
+==========
+
+Some simple Java code to deal with messing around with Jungian psychological
+typing, a la Myers-Briggs testing and the like. See
+
+    http://en.wikipedia.org/wiki/Personality_type
+
+This code doesn't contain any actual content but rather the data types and
+classes used to setup a test and do type transforms etc.
+
+Copyright (c) 2012, Brandon Valosek
+See LICENSE file for details
+
